@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-and-cleanup
+spec:
+  workspaces:
+    - name: pipeline-ws
+  tasks:
+    - name: build
+      taskRef:
+        name: buildah-task
+      workspaces:
+        - name: source
+          workspace: pipeline-ws
+          subPath: source
+    - name: cleanup
+      taskRef:
+        name: cleanup
+      runAfter:
+        - build
+      workspaces:
+        - name: source
+          workspace: pipeline-ws
+          subPath: source
